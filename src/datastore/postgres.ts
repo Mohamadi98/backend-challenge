@@ -3,8 +3,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 const connectionString = process.env.POSTGRES_CONNECTION_STRING
-console.log(connectionString)
-export class postgres {
+export class Postgres {
     private pool: Pool
 
     constructor() {

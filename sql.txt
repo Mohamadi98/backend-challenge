@@ -1,0 +1,23 @@
+CREATE TABLE apps (
+  id SERIAL PRIMARY KEY,
+  token varchar(100) NOT NULL UNIQUE,
+  name varchar(100) NOT NULL,
+  chats_count int DEFAULT 0,
+  created_at timestamptz DEFAULT NOW()
+);
+CREATE TABLE chats (
+  id SERIAL PRIMARY KEY,
+  app_id int REFERENCES apps(id) ON DELETE CASCADE,
+  number int NOT NULL,
+  messages_count int DEFAULT 0,
+  created_at timestamptz DEFAULT NOW(),
+  CONSTRAINT uq_app_chat_number UNIQUE(app_id, number)
+);
+CREATE TABLE messages (
+  id SERIAL PRIMARY KEY,
+  chat_id int REFERENCES chats(id) ON DELETE CASCADE,
+  number int NOT NULL,
+  body text NOT NULL,
+  created_at timestamptz DEFAULT NOW(),
+  CONSTRAINT uq_chat_message_number UNIQUE(chat_id, number)
+);

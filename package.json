@@ -19,11 +19,13 @@
   },
   "dependencies": {
     "express": "^5.2.1",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "redis": "^6.0.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/pg": "^8.20.0",
+    "@types/redis": "^4.0.10",
     "dotenv": "^17.4.2",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2"

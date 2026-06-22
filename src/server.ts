@@ -1,10 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { postgres } from './datastore/postgres'
+import { Postgres } from './datastore/postgres'
+import { Redis } from './datastore/redis'
 
 (async ()=> {
     const app = express()
-    const postgresClient = new postgres()
+    const postgres = new Postgres()
+    const redis = new Redis()
     const requestLogger: express.RequestHandler = (req, _res, next)=> {
         console.log(
             req.method, req.path, " Body - ", req.body, " Params - ", req.params
@@ -19,14 +21,16 @@ import { postgres } from './datastore/postgres'
     })
 
     try {
-        await postgresClient.query('SELECT NOW()')
+        await postgres.query('SELECT NOW()')
         console.log('Database connected successfuly!')
+        await redis.connect()
+        console.log('Redis connected Successfuly!')
 
         app.listen(3000, () => {
         console.log('Server running on PORT: 3000')
     })
     } catch (error) {
-        console.error('Database connection failed:', error)
+        console.error('Server startup error:', error)
         process.exit(1)
     }
 })()
