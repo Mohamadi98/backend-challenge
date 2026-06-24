@@ -15,6 +15,9 @@ export class Postgres {
             console.error('Postgres error: ', error)
         })
     }
+    public async connect() {
+        await this.pool.connect()
+    }
     public async query(query: string, params?: any[]): Promise<QueryResult> {
         return this.pool.query(query, params)
     }

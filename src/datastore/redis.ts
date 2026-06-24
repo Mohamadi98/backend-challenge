@@ -3,7 +3,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 const connectionString = process.env.REDIS_CONNECTION_STRING
-console.log(connectionString)
 
 export class Redis {
     private client: RedisClientType
