@@ -26,4 +26,23 @@ export class AppRepository {
             }
         }
     }
+
+    public async getByToken(token: string): Promise<AppModel | null> {
+        try {
+            const result = await this.postgres.query(`SELECT * FROM apps WHERE token = $1`, [token])
+            if(result.rows.length === 0) return null
+            const row = result.rows[0]
+            return new AppModel(row.token, row.name, row.chatsCount, row.id, row.createdAt)
+        } catch (error) {
+            throw new DatabaseError('unexpected Database error', error)
+        }
+    }
+
+    public async deleteByToken(token: string) {
+        try {
+            await this.postgres.query('DELETE FROM apps WHERE token = $1', [token])
+        } catch (error) {
+            throw new DatabaseError('unexpected Database error', error)
+        }
+    }
 }

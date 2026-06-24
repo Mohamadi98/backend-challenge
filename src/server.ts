@@ -34,6 +34,8 @@ import { AppRepository } from './repositories/app'
 
 
         app.post('/api/app', (req, res) => appController.create(req, res))
+        app.get('/api/app/:token', (req, res) => appController.getByToken(req, res))
+        app.delete('/api/app/:token', (req, res) => appController.deleteByToken(req, res))
         app.listen(3000, () => {
         console.log('Server running on PORT: 3000')
     })

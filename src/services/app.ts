@@ -9,9 +9,16 @@ export class AppService {
     }
 
     public async create(name: string): Promise<AppModel | null> {
-        // const token = crypto.randomUUID()
-        const token = 'bdabc22b-6cf0-4b19-8da1-98dc34f4a9cf'
+        const token = crypto.randomUUID()
         const app = new AppModel(token, name)
         return await this.appRepository.create(app)
+    }
+
+    public async getByToken(token: string) {
+        return await this.appRepository.getByToken(token)
+    }
+
+    public async deleteByToken(token: string) {
+        return await this.appRepository.deleteByToken(token)
     }
 }
