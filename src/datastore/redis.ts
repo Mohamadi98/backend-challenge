@@ -31,4 +31,16 @@ export class Redis {
     public async disconnect() {
         await this.client.quit()
     }
+    public async set(key: string, value: any) {
+        return await this.client.set(key, value)
+    }
+    public async get(key: string) {
+        return await this.client.get(key)
+    }
+    public async incr(key: string) {
+        return await this.client.INCR(key)
+    }
+    public async decr(key: string) {
+        return await this.client.DECR(key)
+    }
 }

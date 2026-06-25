@@ -1,3 +1,4 @@
+import { DatabaseError, DuplicateResourceError } from "../errors/error";
 import { AppModel } from "../models/app";
 import { AppRepository } from "../repositories/app";
 
@@ -8,17 +9,33 @@ export class AppService {
         this.appRepository = appRepository
     }
 
-    public async create(name: string): Promise<AppModel | null> {
+    public async create(name: string): Promise<AppModel> {
         const token = crypto.randomUUID()
         const app = new AppModel(token, name)
-        return await this.appRepository.create(app)
+        try {
+            return await this.appRepository.create(app)
+        } catch (error: any) {
+            if(error.code === '23505') {
+                throw new DuplicateResourceError('Duplicate token entry', error)
+            } else {
+                throw new DatabaseError('Unexpected Datbase error', error)
+            }
+        }
     }
 
     public async getByToken(token: string) {
-        return await this.appRepository.getByToken(token)
+        try {
+            return await this.appRepository.getByToken(token)
+        } catch (error) {
+            throw new DatabaseError('unexpected Database error', error)
+        }
     }
 
     public async deleteByToken(token: string) {
-        return await this.appRepository.deleteByToken(token)
+        try {
+            return await this.appRepository.deleteByToken(token)
+        } catch (error) {
+            throw new DatabaseError('unexpected Database error', error)
+        }
     }
 }
