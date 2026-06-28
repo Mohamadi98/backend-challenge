@@ -1,18 +1,23 @@
 import { DatabaseError, DuplicateResourceError } from "../errors/error";
 import { AppModel } from "../models/app";
 import { AppRepository } from "../repositories/app";
+import { Redis } from "../datastore/redis";
 
 export class AppService {
     private appRepository: AppRepository
+    private redis: Redis
 
-    constructor(appRepository: AppRepository) {
+    constructor(appRepository: AppRepository, redis: Redis) {
         this.appRepository = appRepository
+        this.redis = redis
     }
 
     public async create(name: string): Promise<AppModel> {
         const token = crypto.randomUUID()
         const app = new AppModel(token, name)
         try {
+            const key = `app:${token}:chat:number`
+            await this.redis.set(key, 0)
             return await this.appRepository.create(app)
         } catch (error: any) {
             if(error.code === '23505') {

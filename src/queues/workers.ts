@@ -1,13 +1,16 @@
 import { Worker } from "bullmq";
-import { Postgres } from "../datastore/postgres";
 import { QueueEnum } from "../enums";
 import { ChatRepository } from "../repositories/chat";
+import { ChatModel } from "../models/chat";
 
-export function InitializeChatWorker(chatRepository: ChatRepository) {
+export function InitializeChatWorker(chatRepository: ChatRepository, redis: any) {
     const chatWorker = new Worker(QueueEnum.CHAT_QUEUE_NAME, async (job) => {
         switch (job.name) {
             case QueueEnum.CHAT_JOB_CREATE: {
                 console.log(`[WORKER] executing job id:${job.id} of name:${job.name}`)
+                const chat = new ChatModel(job.data.appId, job.data.chatNumber)
+                const newChat = await chatRepository.create(chat)
+                console.log('New chat created', newChat)
                 break;
             }
             
@@ -18,5 +21,5 @@ export function InitializeChatWorker(chatRepository: ChatRepository) {
             default:
                 break;
         }
-    })
+    }, {connection: redis})
 }

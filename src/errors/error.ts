@@ -21,3 +21,11 @@ export class ForeignKeyViolationError extends Error {
         this.cause = originalError
     }
 }
+
+export class ResourceNotFoundError extends Error {
+    constructor(message: string, originalError?: any) {
+        super(message)
+        this.name = 'ResourceNotFoundError'
+        this.cause = originalError
+    }
+}
