@@ -20,7 +20,25 @@ export class ChatController {
             res.status(201).json({newChatNumber})
         } catch (error) {
             if(error instanceof ResourceNotFoundError) {
-                console.log('in if check for error')
+                res.status(404).json({error: error.message})
+            } else {
+                res.status(500).json({error: 'Internal server error'})
+            }
+        }
+    }
+
+    public async getChatsByappToken(req: Request, res: Response) {
+        const token = req.params.token as string
+        if(!token) {
+            res.status(400).json({message: 'Missing required path params!'})
+            return
+        }
+        try {
+            const chats = await this.chatService.getChatsByAppToken(token)
+            res.status(200).json(chats)
+        } catch (error) {
+            if(error instanceof ResourceNotFoundError) {
+                console.log(error.message)
                 res.status(404).json({error: error.message})
             } else {
                 res.status(500).json({error: 'Internal server error'})

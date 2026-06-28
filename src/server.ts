@@ -19,7 +19,7 @@ import { ChatQueue } from './queues/chat'
     const appRepository = new AppRepository(postgres)
     const chatRepository = new ChatRepository(postgres)
     const appService = new AppService(appRepository, redis)
-    const chatService = new ChatService(redis, chatQueue, appRepository)
+    const chatService = new ChatService(redis, chatQueue, appRepository, chatRepository)
     const chatController = new ChatController(chatService)
     const appController = new AppController(appService)
     const requestLogger: express.RequestHandler = (req, _res, next)=> {
@@ -47,6 +47,8 @@ import { ChatQueue } from './queues/chat'
         app.get('/api/app/:token', (req, res) => appController.getByToken(req, res))
         app.delete('/api/app/:token', (req, res) => appController.deleteByToken(req, res))
         app.post('/api/app/chat', (req, res) => chatController.create(req, res))
+        app.get('/api/apps/:token/chats', (req, res) => chatController.getChatsByappToken(req, res))
+
         app.listen(3000, () => {
         console.log('Server running on PORT: 3000')
     })
