@@ -33,4 +33,12 @@ export class ChatRepository {
         const result = await this.postgres.query(`SELECT * FROM chats WHERE app_id = $1`, [appId])
         return result.rows.map((chat) => new ChatModel(chat.app_id, chat.number, chat.messages_count, chat.id, chat.created_at))
     }
+
+    public async delete(appId: number, chatNumber: number) {
+        try {
+            await this.postgres.query(`DELETE FROM chats WHERE app_id = $1 AND number = $2`, [appId, chatNumber])
+        } catch (error: any) {
+            console.log(error)
+        }
+    }
 }

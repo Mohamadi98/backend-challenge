@@ -48,6 +48,7 @@ import { ChatQueue } from './queues/chat'
         app.delete('/api/app/:token', (req, res) => appController.deleteByToken(req, res))
         app.post('/api/app/chat', (req, res) => chatController.create(req, res))
         app.get('/api/apps/:token/chats', (req, res) => chatController.getChatsByappToken(req, res))
+        app.delete('/api/app/:token/chat/:number', (req, res) => chatController.delete(req, res))
 
         app.listen(3000, () => {
         console.log('Server running on PORT: 3000')

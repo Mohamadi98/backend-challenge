@@ -65,4 +65,24 @@ export class ChatService {
             }
         }
     }
+
+    public async delete(token: string, chatNumber: number) {
+        try {
+            const app = await this.appRepository.getByToken(token)
+            if(app === null) {
+                throw new ResourceNotFoundError('Invalid app token!')
+            }
+            const appId = app.getId()
+            if(appId) {
+                await this.queue.delete(appId, chatNumber)
+            }
+        } catch (error: any) {
+            if(error instanceof ResourceNotFoundError) {
+                throw error
+            } else {
+                console.log(error)
+                throw new Error('Unexpected error occured', error)
+            }
+        }
+    }
 }

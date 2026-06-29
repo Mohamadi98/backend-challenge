@@ -16,6 +16,8 @@ export function InitializeChatWorker(chatRepository: ChatRepository, redis: any)
             
             case QueueEnum.CHAT_JOB_DELETE: {
                 console.log(`[WORKER] executing job id:${job.id} of name:${job.name}`)
+                await chatRepository.delete(job.data.appId, job.data.chatNumber)
+                console.log(`chat with appId: ${job.data.appId} and number: ${job.data.chatNumber} deleted successfuly!`)
                 break;
             }
             default:

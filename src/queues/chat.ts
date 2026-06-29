@@ -22,8 +22,8 @@ export class ChatQueue {
             }
         })
     }
-    public async delete(chatId: number) {
-        await this.queue.add(QueueEnum.CHAT_JOB_DELETE, { chatId }, {
+    public async delete(appId: number, chatNumber: number) {
+        await this.queue.add(QueueEnum.CHAT_JOB_DELETE, { appId, chatNumber }, {
             attempts: 3,
             backoff: {
                 type: 'exponential',

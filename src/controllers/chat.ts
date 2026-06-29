@@ -45,4 +45,25 @@ export class ChatController {
             }
         }
     }
+
+    public async delete(req: Request, res: Response) {
+        const token = req.params.token as string
+        const number = req.params.number as string
+        if(!token || !number) {
+            res.status(400).json({message: 'missing required path params!'})
+            return
+        }
+        try {
+            const chatNumber = Number(number)
+            await this.chatService.delete(token, chatNumber)
+            res.status(204)
+            res.end()
+        } catch (error) {
+            if(error instanceof ResourceNotFoundError) {
+                res.status(404).json({error: error.message})
+            } else {
+                res.status(500).json({error: 'Internal server error!'})
+            }
+        }
+    }
 }
