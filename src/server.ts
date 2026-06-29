@@ -10,18 +10,26 @@ import { ChatRepository } from './repositories/chat'
 import { ChatController } from './controllers/chat'
 import { ChatService } from './services/chat'
 import { ChatQueue } from './queues/chat'
+import { MessageQueue } from './queues/message'
+import { MessageRepository } from './repositories/message'
+import { MessageService } from './services/message'
+import { MessageController } from './controllers/message'
 
 (async ()=> {
     const app = express()
     const postgres = new Postgres()
     const redis = new Redis()
     const chatQueue = new ChatQueue(redis)
+    const messageQueue = new MessageQueue(redis)
     const appRepository = new AppRepository(postgres)
     const chatRepository = new ChatRepository(postgres)
+    const messageRepository = new MessageRepository(postgres)
     const appService = new AppService(appRepository, redis)
     const chatService = new ChatService(redis, chatQueue, appRepository, chatRepository)
+    const messageService = new MessageService(redis, chatRepository, messageQueue, appRepository)
     const chatController = new ChatController(chatService)
     const appController = new AppController(appService)
+    const messageController = new MessageController(messageService)
     const requestLogger: express.RequestHandler = (req, _res, next)=> {
         console.log(
             req.method, req.path, " Body - ", req.body, " Params - ", req.params
@@ -40,7 +48,7 @@ import { ChatQueue } from './queues/chat'
         console.log('Database connected successfuly!')
         await redis.connect()
         console.log('Redis connected Successfuly!')
-        InitializeChatWorker(chatRepository, redis)
+        InitializeChatWorker(chatRepository, redis, messageRepository)
 
 
         app.post('/api/app', (req, res) => appController.create(req, res))
@@ -49,6 +57,7 @@ import { ChatQueue } from './queues/chat'
         app.post('/api/app/chat', (req, res) => chatController.create(req, res))
         app.get('/api/apps/:token/chats', (req, res) => chatController.getChatsByappToken(req, res))
         app.delete('/api/app/:token/chat/:number', (req, res) => chatController.delete(req, res))
+        app.post('/api/app/:token/chat/:number/message', (req, res) => messageController.create(req, res))
 
         app.listen(3000, () => {
         console.log('Server running on PORT: 3000')

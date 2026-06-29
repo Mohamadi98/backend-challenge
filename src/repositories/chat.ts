@@ -41,4 +41,11 @@ export class ChatRepository {
             console.log(error)
         }
     }
+
+    public async getChatByNumber(appId: number, number: number) {
+        const result = await this.postgres.query(`SELECT * FROM chats WHERE app_id = $1 AND number = $2`, [appId, number])
+        if(result.rowCount === 0) return null
+        const row = result.rows[0]
+        return new ChatModel(row.app_id, row.number, row.messages_count, row.id, row.created_at)
+    }
 }

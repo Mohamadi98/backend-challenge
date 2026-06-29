@@ -30,6 +30,8 @@ export class ChatService {
                 const key = `app:${token}:chat:number`
                 const chatNumber = await this.redis.incr(key)
                 await this.queue.create(appId, chatNumber)
+                const chatKey = `${token}:chat:${chatNumber}:msg:number`
+                await this.redis.set(chatKey, 0)
                 return chatNumber
             } else {
                 return null
