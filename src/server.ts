@@ -5,7 +5,7 @@ import { Postgres } from './datastore/postgres'
 import { Redis } from './datastore/redis'
 import { AppService } from './services/app'
 import { AppRepository } from './repositories/app'
-import { InitializeChatWorker } from './queues/workers'
+import { InitializeChatWorker, InitializeMessageWorker } from './queues/workers'
 import { ChatRepository } from './repositories/chat'
 import { ChatController } from './controllers/chat'
 import { ChatService } from './services/chat'
@@ -48,7 +48,8 @@ import { MessageController } from './controllers/message'
         console.log('Database connected successfuly!')
         await redis.connect()
         console.log('Redis connected Successfuly!')
-        InitializeChatWorker(chatRepository, redis, messageRepository)
+        InitializeChatWorker(chatRepository, redis)
+        InitializeMessageWorker(redis, messageRepository)
 
 
         app.post('/api/app', (req, res) => appController.create(req, res))
@@ -57,7 +58,7 @@ import { MessageController } from './controllers/message'
         app.post('/api/app/chat', (req, res) => chatController.create(req, res))
         app.get('/api/apps/:token/chats', (req, res) => chatController.getChatsByappToken(req, res))
         app.delete('/api/app/:token/chat/:number', (req, res) => chatController.delete(req, res))
-        app.post('/api/app/:token/chat/:number/message', (req, res) => messageController.create(req, res))
+        app.post('/api/app/chat/message', (req, res) => messageController.create(req, res))
 
         app.listen(3000, () => {
         console.log('Server running on PORT: 3000')

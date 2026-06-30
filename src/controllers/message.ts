@@ -17,7 +17,7 @@ export class MessageController {
         }
         try {
             const newMessage = await this.messageService.create(token, chatNumber, body)
-            return res.status(201).json(newMessage)
+            res.status(201).json(newMessage)
         } catch (error) {
             if(error instanceof ResourceNotFoundError) {
                 res.status(404).json({error: error.message})

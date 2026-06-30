@@ -17,7 +17,7 @@ export class MessageRepository {
                 RETURNING *`, [message.getChatId(), message.getBody(), message.getNumber()]
             )
             const row = result.rows[0]
-            return new MessageModel(row.chat_id, row.number, row.body, row.id, row.created_id)
+            return new MessageModel(row.chat_id, row.number, row.body, row.id, row.created_at)
         } catch (error: any) {
             if(error.code === '23503') {
                 console.log(error)

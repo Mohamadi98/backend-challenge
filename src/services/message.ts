@@ -41,9 +41,13 @@ export class MessageService {
             } else {
                 return null
             }
-        } catch (error) {
+        } catch (error: any) {
+            console.log(error)
             if(error instanceof ResourceNotFoundError) {
                 throw error
+            } else {
+                console.log(error)
+                throw new Error('Unexpected error occured', error)
             }
         }
     }

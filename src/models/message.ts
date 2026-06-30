@@ -13,19 +13,19 @@ export class MessageModel {
         this.createdAt = createdAt
     }
 
-    public async getId() {
+    public getId() {
         return this.id
     }
-    public async getChatId() {
+    public getChatId() {
         return this.chatId
     }
-    public async getNumber() {
+    public getNumber() {
         return this.number
     }
-    public async getBody() {
+    public getBody() {
         return this.body
     }
-    public async getCeatedAt() {
+    public getCeatedAt() {
         return this.createdAt
     }
 }
