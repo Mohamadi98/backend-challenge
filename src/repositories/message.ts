@@ -31,4 +31,25 @@ export class MessageRepository {
             }
         }
     }
+
+    public async getMessages(chatId: number) {
+        const result = await this.postgres.query(`SELECT * FROM messages WHERE chat_id = $1`, [chatId])
+        return result.rows.map((row) =>  new MessageModel(row.chat_id, row.number, row.body, row.id, row.created_at))
+    }
+
+    public async getMessage(chatId: number, msgNumber: number) {
+        const result = await this.postgres.query(
+            `SELECT * FROM messages WHERE chat_id = $1 AND number = $2`, [chatId, msgNumber])
+        if(result.rowCount === 0) return null
+        const row = result.rows[0]
+        return new MessageModel(row.chat_id, row.number, row.body, row.id, row.created_at)
+    }
+
+    public async delete(chatId: number, msgNumber: number) {
+        try {
+            await this.postgres.query(`DELETE FROM messages WHERE chat_id = $1 AND number = $2`, [chatId, msgNumber])
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }

@@ -26,7 +26,7 @@ import { MessageController } from './controllers/message'
     const messageRepository = new MessageRepository(postgres)
     const appService = new AppService(appRepository, redis)
     const chatService = new ChatService(redis, chatQueue, appRepository, chatRepository)
-    const messageService = new MessageService(redis, chatRepository, messageQueue, appRepository)
+    const messageService = new MessageService(redis, chatRepository, messageQueue, appRepository, messageRepository)
     const chatController = new ChatController(chatService)
     const appController = new AppController(appService)
     const messageController = new MessageController(messageService)
@@ -59,6 +59,9 @@ import { MessageController } from './controllers/message'
         app.get('/api/apps/:token/chats', (req, res) => chatController.getChatsByappToken(req, res))
         app.delete('/api/app/:token/chat/:number', (req, res) => chatController.delete(req, res))
         app.post('/api/app/chat/message', (req, res) => messageController.create(req, res))
+        app.get('/api/app/:token/chat/:number/messages', (req, res) => messageController.getMessages(req, res))
+        app.get('/api/app/:token/chat/:chat_number/message/:msg_number', (req, res) => messageController.getMessage(req, res))
+        app.delete('/api/app/:token/chat/:chat_number/message/:msg_number', (req, res) => messageController.delete(req, res))
 
         app.listen(3000, () => {
         console.log('Server running on PORT: 3000')

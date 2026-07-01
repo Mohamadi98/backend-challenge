@@ -42,6 +42,8 @@ export function InitializeMessageWorker(redis: any, messageRepository: MessageRe
 
             case QueueEnum.MESSAGE_JOB_DELETE: {
                 console.log(`[WORKER] executing job id:${job.id} of name:${job.name}`)
+                await messageRepository.delete(job.data.chatId, job.data.number)
+                console.log(`message with chatId: ${job.data.chatId} and number: ${job.data.number} deleted successfuly!`)
                 break;
             }
 

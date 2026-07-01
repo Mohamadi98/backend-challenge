@@ -25,17 +25,13 @@ export class ChatService {
                 console.log('in if check service')
                 throw new ResourceNotFoundError('Invalid app token!', null)
             }
-            const appId = app.getId()
-            if (appId) {
+            const appId = app.getId()!
                 const key = `app:${token}:chat:number`
                 const chatNumber = await this.redis.incr(key)
                 await this.queue.create(appId, chatNumber)
                 const chatKey = `${token}:chat:${chatNumber}:msg:number`
                 await this.redis.set(chatKey, 0)
                 return chatNumber
-            } else {
-                return null
-            }
         } catch (error: any) {
             // if it's the custom error throw it 
             if(error instanceof ResourceNotFoundError) {
@@ -52,13 +48,9 @@ export class ChatService {
             if (app === null) {
                 throw new ResourceNotFoundError('Invalid app token!', null)
             }
-            const appId = app.getId()
-            if(appId) {
+            const appId = app.getId()!
                 const chats = await this.chatRepository.getChatsByAppToken(appId)
                 return chats.map((chat) => new ChatResponseDTO(chat))
-            } else {
-                return null
-            }
         } catch (error: any) {
             if(error instanceof ResourceNotFoundError) {
                 throw error
