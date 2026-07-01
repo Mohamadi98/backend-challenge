@@ -5,6 +5,7 @@ import { MessageQueue } from "../queues/message"
 import { AppRepository } from "../repositories/app"
 import { ChatRepository } from "../repositories/chat"
 import { MessageRepository } from "../repositories/message"
+import { formatChatRedisKey } from "../utils"
 
 export class MessageService {
     private redis: Redis
@@ -34,7 +35,7 @@ export class MessageService {
                 throw new ResourceNotFoundError('Chat with this number not found')
             }
             const chatId = chat.getId()!
-            const chatKey = `${token}:chat:${chatNumber}:msg:number`
+            const chatKey = formatChatRedisKey(token, chatNumber)
             const msgNumber = await this.redis.incr(chatKey)
             await this.messageQueue.create(chatId, body, msgNumber)
             return { body: body, number: msgNumber }

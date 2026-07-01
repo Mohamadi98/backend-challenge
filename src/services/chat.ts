@@ -4,6 +4,7 @@ import { AppRepository } from "../repositories/app";
 import { ChatRepository } from "../repositories/chat";
 import { ResourceNotFoundError } from "../errors/error";
 import { ChatResponseDTO } from "../DTOs/chat";
+import { formatAppRedisKey, formatChatRedisKey } from "../utils";
 
 export class ChatService {
     private redis: Redis
@@ -26,10 +27,10 @@ export class ChatService {
                 throw new ResourceNotFoundError('Invalid app token!', null)
             }
             const appId = app.getId()!
-                const key = `app:${token}:chat:number`
+                const key = formatAppRedisKey(token)
                 const chatNumber = await this.redis.incr(key)
                 await this.queue.create(appId, chatNumber)
-                const chatKey = `${token}:chat:${chatNumber}:msg:number`
+                const chatKey = formatChatRedisKey(token, chatNumber)
                 await this.redis.set(chatKey, 0)
                 return chatNumber
         } catch (error: any) {
@@ -66,10 +67,10 @@ export class ChatService {
             if(app === null) {
                 throw new ResourceNotFoundError('Invalid app token!')
             }
-            const appId = app.getId()
-            if(appId) {
+            const appId = app.getId()!
                 await this.queue.delete(appId, chatNumber)
-            }
+                const chatRedisKey = formatChatRedisKey(token, chatNumber)
+                await this.redis.del(chatRedisKey)
         } catch (error: any) {
             if(error instanceof ResourceNotFoundError) {
                 throw error
